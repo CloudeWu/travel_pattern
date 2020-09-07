@@ -1,0 +1,6 @@
+env/
+data/
+model/
+
+.ipynb_checkpoints/
+
