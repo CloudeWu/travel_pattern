@@ -1,4 +1,4 @@
-from gensim.models import Word2Vec
+from gensim.models import Word2Vec, KeyedVectors
 from gensim.models.callbacks import CallbackAny2Vec
 from time import time
 import os
@@ -39,7 +39,7 @@ class loss_record(CallbackAny2Vec):
         self.record.append(loss)
         self.total_loss = model.get_latest_training_loss()
         if self.logging:
-            print('Loss after epoch {:3d}: {:10.3f}'.format(self.epoch, loss))
+            print('[ INFO ] Loss after epoch {:3d}: {:10.3f}'.format(self.epoch, loss))
         self.epoch += 1
 
 class log_epoch(CallbackAny2Vec):
@@ -56,47 +56,77 @@ class log_epoch(CallbackAny2Vec):
         print(f'[ INFO ] Epoch {self.epoch} end. Time eplapse: {train_time}')
         self.epoch += 1
 
-def train(input_file, output_dir, epoch, dim, eval_file):
+def load_pretrain(model, pretrained_path):
+    print('[ INFO ] loading pretrained vocabulary list...')
+    pretrained_model = KeyedVectors.load_word2vec_format(pretrained_path, binary=True)
+    model.build_vocab([list(pretrained_model.vocab.keys())], update=True)
+    del pretrained_model   # free memory
+
+    print('[ INFO ] loading pretrained model...')
+    model.intersect_word2vec_format(pretrained_path, binary=True, lockf=0.0)    # lockf: freeze or not
+
+    return model 
+
+def train(input_file, output_dir, epoch, dim, eval_file, pretrained_model=None):
     # preprocessing
     print('[ INFO ] data processing...')
     training_data = load_file(input_file)
     training_data = preprocessing(training_data)
 
-    # training
+    # prepare model
     losses = []
+    model = Word2Vec(size = dim, 
+                     min_count = 1,
+                     callbacks = [log_epoch(), loss_record(losses, True)])
+    model.build_vocab(training_data)
+    example_count = model.corpus_count
+
+    # load pretrained
+    if pretrained_model:
+        model = load_pretrain(model, pretrained_model)
+
+    # training
     print('[ INFO ] training start.')
-    model = Word2Vec(training_data,
-                      size = dim,
-                      iter = epoch,
-                      compute_loss = True,
-                      callbacks=[log_epoch(), loss_record(losses, True)])
+    model.train(training_data,
+                total_examples = example_count,
+                epochs = epoch,
+                compute_loss = True,
+                callbacks = [log_epoch(), loss_record(losses, True)])
+    # model = Word2Vec(training_data,
+    #                   size = dim,
+    #                   iter = epoch,
+    #                   compute_loss = True,
+    #                   callbacks=[log_epoch(), loss_record(losses, True)])
     print('[ INFO ] finished')
 
     # evaluating
-    print('[ INFO ] evaluating...')
-    result = model.wv.evaluate_word_analogies(eval_file)
-    print(f'[ INFO ] evaluating finished. Accuracy = {result[0]}')
+    if eval_file:
+        print('[ INFO ] evaluating...')
+        result = model.wv.evaluate_word_analogies(eval_file)
+        print(f'[ INFO ] evaluating finished. Accuracy = {result[0]}')
 
     # save model
-    print(f'[ INFO ] saving data to {output_dir} ...')
-    ensure_exist(output_dir)
-    model.save(os.path.join(output_dir, 'model'))
-    with open(os.path.join(output_dir, 'loss'), 'w+') as f:
-        for idx, loss in enumerate(losses):
-            f.write(f"{idx}\t{loss}\n")
-    with open(os.path.join(output_dir, 'accuracy'), 'w+') as f:
-        f.write(f"{result[0]}\n")
-        f.write(str(result[1]))
+    if output_dir:
+        print(f'[ INFO ] saving data to {output_dir} ...')
+        ensure_exist(output_dir)
+        model.save(os.path.join(output_dir, 'model'))
+        with open(os.path.join(output_dir, 'loss'), 'w+') as f:
+            for idx, loss in enumerate(losses):
+                f.write(f"{idx}\t{loss}\n")
+        with open(os.path.join(output_dir, 'accuracy'), 'w+') as f:
+            f.write(f"{result[0]}\n")    # write accuracy
+            f.write(str(result[1]))      # write evaluation log
 
 if __name__ == '__main__':
     def parse_args():
         import argparse
         parser = argparse.ArgumentParser()
-        parser.add_argument('-i', '--input', type=str, help='training data')
+        parser.add_argument('-i', '--input', type=str, required=True, help='training data')
         parser.add_argument('-o', '--output', type=str, help='folder to store output')
         parser.add_argument('-e', '--epoch', type=int, default=5,help='#iter')
         parser.add_argument('-d', '--dim', type=int, default=300, help='embedding dimension')
-        parser.add_argument('--evaluate', type=str, default='data/questions-words.txt', help='evaluation data')
+        parser.add_argument('-p', '--pretrained', nargs='?', help='pretrained model path')
+        parser.add_argument('-eval', '--evaluate', type=str, help='evaluation data')
         return parser.parse_args()
     args = parse_args()
 
@@ -107,7 +137,7 @@ if __name__ == '__main__':
     print(f'  + epoch: {args.epoch}')
     print(f'  + dimension: {args.dim}')
     print(f'  + evaluate file: {args.evaluate}')
+    print('  + pretrained model: {}'.format(args.pretrained if args.pretrained else 'None'))
     print()
 
-    train(args.input, args.output, args.epoch, args.dim, args.evaluate)
-    print('finish')
+    train(args.input, args.output, args.epoch, args.dim, args.evaluate, args.pretrained)
