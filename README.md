@@ -19,10 +19,13 @@ Data Download:
 
 #### train_all.sh
 
-Script to train data with all parameter-list.  
+Script to run train.py with all parameter-list at once.  
 Current parameter:  
  - #iter
 
+#### eval_all.sh
+
+Script to run evaluate.py with all models at once.  
 
 #### train.py
 Finetune or train a word2vec model with custom input data.
@@ -44,8 +47,25 @@ optional arguments:
                               evaluation data
 ```
 
+#### evaluate.py
+Evaluate word2vec model with question dataset.  
+If the output_dir is specified, the eval result will be written to output_dir/accuracy.  
+sample: python evaluate.py -o model/mymodel model/mymodel/model data/questions-words.txt
+```
+usage: evaluate.py [-h] [-o OUTPUT] input eval_file
+
+positional arguments:
+  input                       target model
+  eval_file                   evaluation data
+
+optional arguments:
+  -h, --help                  show this help message and exit
+  -o OUTPUT, --output OUTPUT  folder to store output
+```
+
+
 #### finetune.py
-Finetuning test on GoogleNews pretrained model.
+Sample code to finetune on GoogleNews pretrained model.
 
 #### testmodel.py
 Sample code to evaluate model accuracy.
