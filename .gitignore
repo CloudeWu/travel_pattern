@@ -1,8 +1,10 @@
 env/
 data/
-model/
-models/
+model*/
 
 # py tmp files
 .ipynb_checkpoints/
 __pycache__/
+
+# system file
+.DS_store
