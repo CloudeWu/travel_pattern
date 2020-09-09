@@ -1,9 +1,11 @@
 READ ME
 =============
+TOC:
+ * [Server files](#On-Server)
+ * [Other scripts](#Others)
 
-Files
+On Server
 -------------
-### server/
 
 Files on server: joaw@jedi:~/projects/travel_pattern  
 Folder structure:
@@ -17,18 +19,21 @@ Data Download:
  * data/questions-words.txt: Google's evaluation dataset. You can extract it from [Google's source code](https://storage.googleapis.com/google-code-archive-source/v2/code.google.com/word2vec/source-archive.zip)  
  * models/GoogleNews-vectors-negative300.bin: Google's pretrained model. You can download it [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit?usp=sharing)
 
-#### train_all.sh
+### train_all.sh
 
 Script to run train.py with all parameter-list at once.  
 Current parameter:  
  - #iter
 
-#### eval_all.sh
+### eval_all.sh
 
 Script to run evaluate.py with all models at once.  
 
-#### train.py
+### train.py
 Finetune or train a word2vec model with custom input data.
+ * If output is specified, model and losses will be saved to `output/model` and `output/loss`, respectively.  
+ * If pretrained is specified, model will load pretrained model first, and continueing training with input data.(w/o freezing)  
+ * If eval is specified, model do eval with provided question file and write result to `output/accuracy`.  
 ```
 usage: train.py [-h] -i INPUT [-o OUTPUT] [-e EPOCH] [-d DIM] [-p [PRETRAINED]] [-eval EVALUATE]
 
@@ -47,7 +52,7 @@ optional arguments:
                               evaluation data
 ```
 
-#### evaluate.py
+### evaluate.py
 Evaluate word2vec model with question dataset.  
 If the output_dir is specified, the eval result will be written to output_dir/accuracy.  
 sample: python evaluate.py -o model/mymodel model/mymodel/model data/questions-words.txt
@@ -64,25 +69,23 @@ optional arguments:
 ```
 
 
-#### finetune.py
+### finetune.py
 Sample code to finetune on GoogleNews pretrained model.
 
-#### testmodel.py
+### testmodel.py
 Sample code to evaluate model accuracy.
 
 
-### process_bundles[.py|.ipynb]
+Others
+-------------------
+Other local testing or processing file not on server.
 
+### process_bundles[.py|.ipynb]
 All bundle processing methods
 
-
 ### extract_bundles[.py|.ipynb]
-
 Extract all lexical bundles from LB_longlyplanet.json
 
-
 ### playground.ipynb
-
 Notebook for all testing trash.  
-Things here are all messed-up and odd and dangerous and better not to be executed without brains.  
-Black magic is dangerous. You know it, right?
+Things here are all messed-up and odd and dangerous and better not to be executed without brains. Black magic is dangerous. You know it, right?
