@@ -3,5 +3,6 @@ data/
 model/
 models/
 
+# py tmp files
 .ipynb_checkpoints/
-
+__pycache__/
