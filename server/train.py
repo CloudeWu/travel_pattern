@@ -113,9 +113,10 @@ def train(input_file, output_dir, epoch, dim, eval_file, pretrained_model=None):
         with open(os.path.join(output_dir, 'loss'), 'w+') as f:
             for idx, loss in enumerate(losses):
                 f.write(f"{idx}\t{loss}\n")
-        with open(os.path.join(output_dir, 'accuracy'), 'w+') as f:
-            f.write(f"{result[0]}\n")    # write accuracy
-            f.write(str(result[1]))      # write evaluation log
+        if eval_file:
+            with open(os.path.join(output_dir, 'accuracy'), 'w+') as f:
+                f.write(f"{result[0]}\n")    # write accuracy
+                f.write(str(result[1]))      # write evaluation log
 
 if __name__ == '__main__':
     def parse_args():
