@@ -13,7 +13,7 @@ import os
 
 def ensure_exist(path):
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
 
 def load_file(path, encoding='utf-8'):
     with open(path, 'r', encoding=encoding) as f:
