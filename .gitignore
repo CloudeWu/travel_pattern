@@ -2,6 +2,7 @@ env/
 data/
 model*/
 encoder*/
+*emb/
 
 # py tmp files
 .ipynb_checkpoints/

@@ -51,6 +51,16 @@ optional arguments:
   -eval EVALUATE, --evaluate EVALUATE
                               evaluation data
 ```
+#### Output
+If the output_dir is specified, three files will be written into that folder:
+```
+Model
+ |- model       model file
+ |- loss        loss information during training
+ |- accuracy    evaluation result. (only if eval is specified)
+```
+ * loss: One epoch per line. format: `[epoch idx]\t[loss]`
+ * accuracy: Two line in the file. First line is the final accuracy. Second line is all details about every test result.
 
 ### evaluate.py
 Evaluate word2vec model with question dataset.  
@@ -66,6 +76,18 @@ positional arguments:
 optional arguments:
   -h, --help                  show this help message and exit
   -o OUTPUT, --output OUTPUT  folder to store output
+```
+
+### extract_word_emb.py
+Extract all bundles' word embedding.  
+Output will be binary files named [word].emb. You can load it with `np.load('[word].emb')`  
+```
+usage: extract_word_emb.py [-h] [-d] model input output
+
+positional arguments:
+  model        input kv model
+  input        bundles for extracting bundles
+  output       where to store output (default = embeddings/)
 ```
 
 
