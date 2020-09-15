@@ -35,7 +35,7 @@ def load_embeddings(folder, embeddings={}):
     for filename in os.listdir(folder):
         if filename in ['.', '..']: continue
         bundle = os.path.splitext(filename)[0].replace('_', ' ')
-        emb = np.load(os.path.join(folder, filename))
+        emb = np.load(os.path.join(folder, filename), allow_pickle=True)
         embeddings[bundle] = emb
     return embeddings
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         query = input(' >> input: ')
         if query in ['quit', 'q']: break
         try:
-            print_similarity((most_similar(query, embeddings)))
+            print_similarity((most_similar(query, embeddings, args.n)))
         except:
             print('Query not found!')
 
