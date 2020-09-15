@@ -67,7 +67,7 @@ def load_pretrain(model, pretrained_path):
 
     return model 
 
-def train(input_file, output_dir, epoch, dim, window, eval_file, pretrained_model=None):
+def train(input_file, output_dir, epoch, alpha, dim, window, eval_file, pretrained_model=None):
     # preprocessing
     print('[ INFO ] data processing...')
     training_data = load_file(input_file)
@@ -91,6 +91,7 @@ def train(input_file, output_dir, epoch, dim, window, eval_file, pretrained_mode
     model.train(training_data,
                 total_examples = example_count,
                 epochs = epoch,
+                alpha = alpha,
                 compute_loss = True,
                 callbacks = [log_epoch(), loss_record(losses, True)])
     # model = Word2Vec(training_data,
@@ -128,6 +129,7 @@ if __name__ == '__main__':
         parser.add_argument('-e', '--epoch', type=int, default=5,help='#iter')
         parser.add_argument('-d', '--dim', type=int, default=300, help='embedding dimension')
         parser.add_argument('-w', '--window', type=int, default=5, help='window size')
+        parser.add_argument('-a', '--alpha', type=float, default=0.025, help='initial learning rate')
         parser.add_argument('-p', '--pretrained', nargs='?', help='pretrained model path')
         parser.add_argument('-eval', '--evaluate', type=str, help='evaluation data')
         return parser.parse_args()
@@ -137,6 +139,7 @@ if __name__ == '__main__':
     print( 'Get Setting: ')
     print(f'  + input: {args.input}')
     print(f'  + output: {args.output}')
+    print(f'  + alpha: {args.alpha}')
     print(f'  + epoch: {args.epoch}')
     print(f'  + dimension: {args.dim}')
     print(f'  + window size: {args.window}')
@@ -144,4 +147,4 @@ if __name__ == '__main__':
     print( '  + pretrained model: {}'.format(args.pretrained if args.pretrained else 'None'))
     print()
 
-    train(args.input, args.output, args.epoch, args.dim, args.window, args.evaluate, args.pretrained)
+    train(args.input, args.output, args.epoch, args.alpha, args.dim, args.window, args.evaluate, args.pretrained)
