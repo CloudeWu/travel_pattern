@@ -24,6 +24,8 @@ Data Download:
 Script to run train.py with all parameter-list at once.  
 Current parameter:  
  - #iter
+ - window size
+ - dimension
 
 ### eval_all.sh
 
