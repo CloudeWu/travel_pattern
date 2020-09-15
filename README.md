@@ -27,7 +27,7 @@ Current parameter:
 
 ### eval_all.sh
 
-Script to run evaluate.py with all models at once.  
+Script to run do_gensim_evaluate.py with all models at once.  
 
 ### train.py
 Finetune or train a word2vec model with custom input data.
@@ -62,12 +62,12 @@ Model
  * loss: One epoch per line. format: `[epoch idx]\t[loss]`
  * accuracy: Two line in the file. First line is the final accuracy. Second line is all details about every test result.
 
-### evaluate.py
-Evaluate word2vec model with question dataset.  
+### do_gensim_evaluate.py
+Use gensim evaluate_word_analogies() function to evaluate word2vec model with question dataset.  
 If the output_dir is specified, the eval result will be written to output_dir/accuracy.  
 sample: python evaluate.py -o model/mymodel model/mymodel/model data/questions-words.txt
 ```
-usage: evaluate.py [-h] [-o OUTPUT] input eval_file
+usage: do_gensim_evaluate.py [-h] [-o OUTPUT] input eval_file
 
 positional arguments:
   input                       target model
