@@ -139,6 +139,22 @@ optional arguments:
                         verbose level. 0=only error, 3=debugging
 ```
 
+### check_similarity[.py|.ipynb]
+Get load pharse embeddings and find the most similar vectors.  
+ * check_similarity.ipynb contains cherry-picked result  
+ * check_similarity.py can check similarity on the fly. Usage: `python check_similarity.py bundle_emb`
+```
+usage: check_similarity.py [-h] [-n N] folders [folders ...]
+
+positional arguments:
+  folders     embedding folders
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -n N        how many similar bundles to show
+```
+
+
 ### finetune.py
 Sample code to finetune on GoogleNews pretrained model.
 
