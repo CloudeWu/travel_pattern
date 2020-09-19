@@ -77,6 +77,7 @@ def train(input_file, output_dir, epoch, alpha, dim, window, eval_file, pretrain
     losses = []
     model = Word2Vec(size = dim, 
                      min_count = 1,
+                     alpha = alpha,
                      window = window,
                      callbacks = [log_epoch(), loss_record(losses, True)])
     model.build_vocab(training_data)
@@ -91,7 +92,6 @@ def train(input_file, output_dir, epoch, alpha, dim, window, eval_file, pretrain
     model.train(training_data,
                 total_examples = example_count,
                 epochs = epoch,
-                alpha = alpha,
                 compute_loss = True,
                 callbacks = [log_epoch(), loss_record(losses, True)])
     # model = Word2Vec(training_data,
